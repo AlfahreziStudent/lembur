@@ -29,11 +29,8 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Set permission untuk folder Laravel yang butuh permission tulis
 RUN chmod -R 777 storage bootstrap/cache
 
-# Set environment variable default untuk PORT (fallback jika Railway tidak menyediakannya)
-ENV PORT=8080
-
 # Expose port agar bisa diakses dari luar container
-EXPOSE ${PORT}
+EXPOSE 8080
 
 # Jalankan Laravel development server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT}"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
