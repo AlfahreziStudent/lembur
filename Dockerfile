@@ -2,7 +2,7 @@ FROM php:8.1-cli
 
 WORKDIR /app
 
-# Install dependencies (termasuk ext-gd)
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     unzip \
     curl \
@@ -30,5 +30,5 @@ RUN chmod -R 777 storage bootstrap/cache
 # Expose port
 EXPOSE 8080
 
-# Start Laravel dev server
-CMD php artisan serve --host=0.0.0.0 --port=${PORT}
+# ✅ FIX: Jalankan php artisan serve lewat shell agar bisa handle default port
+CMD sh -c "php artisan serve --host=0.0.0.0 --port=\${PORT:-8080}"
