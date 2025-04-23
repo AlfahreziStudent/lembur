@@ -2,24 +2,33 @@ FROM php:8.1-cli
 
 WORKDIR /app
 
-# Install dependencies
-RUN apt-get update && apt-get install -y unzip curl libzip-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql zip
+# Install dependencies (termasuk ext-gd)
+RUN apt-get update && apt-get install -y \
+    unzip \
+    curl \
+    libzip-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql zip gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy all app files
+# Copy source code
 COPY . .
 
 # Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Set correct permissions
+# Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
-# Expose port (Railway assigns random port via $PORT)
+# Expose port
 EXPOSE 8080
 
-# Start Laravel server
+# Start Laravel dev server
 CMD php artisan serve --host=0.0.0.0 --port=${PORT}
